@@ -1,0 +1,114 @@
+:root {
+    --sp-green-dark: #1b4332;
+    --sp-green: #2d6a4f;
+    --sp-green-light: #40916c;
+    --sp-green-lighter: #74c69d;
+    --sp-blue: #0077b6;
+    --sp-bg: #f4f9f4;
+}
+
+body {
+    background-color: var(--sp-bg);
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.sp-navbar {
+    background: linear-gradient(135deg, var(--sp-green-dark), var(--sp-green));
+}
+
+.sp-navbar .sp-subtitle {
+    font-size: 0.65rem;
+    font-weight: 400;
+    color: #d8f3dc;
+    line-height: 1;
+}
+
+.sp-navbar .nav-link {
+    color: #e9f5ec;
+    font-weight: 500;
+}
+
+.sp-navbar .nav-link.active,
+.sp-navbar .nav-link:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+.sp-page-header {
+    background: linear-gradient(135deg, var(--sp-green), var(--sp-green-light));
+    color: white;
+    border-radius: 0.75rem;
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.stat-card {
+    border: none;
+    border-radius: 0.9rem;
+    color: white;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    transition: transform 0.15s ease-in-out;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+}
+
+.stat-card .stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.stat-card .stat-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.9;
+}
+
+.bg-sp-1 { background: linear-gradient(135deg, #2d6a4f, #40916c); }
+.bg-sp-2 { background: linear-gradient(135deg, #1b4332, #2d6a4f); }
+.bg-sp-3 { background: linear-gradient(135deg, #0077b6, #00b4d8); }
+.bg-sp-4 { background: linear-gradient(135deg, #52b788, #74c69d); }
+.bg-sp-5 { background: linear-gradient(135deg, #f4a261, #e76f51); }
+.bg-sp-6 { background: linear-gradient(135deg, #e63946, #d00000); }
+.bg-sp-7 { background: linear-gradient(135deg, #457b9d, #1d3557); }
+.bg-sp-8 { background: linear-gradient(135deg, #ff9f1c, #f77f00); }
+
+.card {
+    border-radius: 0.75rem;
+}
+
+.table-responsive {
+    border-radius: 0.6rem;
+    overflow: hidden;
+}
+
+.badge-status {
+    font-size: 0.75rem;
+    padding: 0.4em 0.7em;
+}
+
+.section-title {
+    color: var(--sp-green-dark);
+    font-weight: 700;
+    border-left: 4px solid var(--sp-green-light);
+    padding-left: 0.6rem;
+    margin-bottom: 1rem;
+}
+
+.btn-sp-primary {
+    background-color: var(--sp-green);
+    border-color: var(--sp-green);
+    color: white;
+}
+
+.btn-sp-primary:hover {
+    background-color: var(--sp-green-dark);
+    border-color: var(--sp-green-dark);
+    color: white;
+}
+
+footer {
+    padding: 1rem 0;
+}

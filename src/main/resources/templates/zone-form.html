@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: headContent('Zone Form')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar('zones')}"></nav>
+<div th:replace="~{fragments :: alerts-banner}"></div>
+
+<div class="container py-4">
+    <div class="sp-page-header">
+        <h2><i class="bi bi-droplet-half me-2"></i><span th:text="${zone.id == null} ? 'New Irrigation Zone' : 'Edit Irrigation Zone'">Zone</span></h2>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <form th:action="${zone.id == null} ? @{/zones/save} : @{/zones/{id}/update(id=${zone.id})}"
+                  th:object="${zone}" method="post" class="row g-3">
+
+                <div class="col-md-4">
+                    <label class="form-label">Zone Code *</label>
+                    <input type="text" th:field="*{zoneCode}" class="form-control" th:errorclass="is-invalid"/>
+                    <div class="invalid-feedback" th:errors="*{zoneCode}"></div>
+                </div>
+                <div class="col-md-8">
+                    <label class="form-label">Zone Name *</label>
+                    <input type="text" th:field="*{zoneName}" class="form-control" th:errorclass="is-invalid"/>
+                    <div class="invalid-feedback" th:errors="*{zoneName}"></div>
+                </div>
+                <div class="col-md-8">
+                    <label class="form-label">Park *</label>
+                    <select th:field="*{park.id}" class="form-select" required>
+                        <option value="">-- Select park --</option>
+                        <option th:each="p : ${parks}" th:value="${p.id}" th:text="${p.parkCode + ' - ' + p.parkName}"></option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Area (acres)</label>
+                    <input type="number" step="0.01" th:field="*{area}" class="form-control" th:errorclass="is-invalid"/>
+                    <div class="invalid-feedback" th:errors="*{area}"></div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Plant Type</label>
+                    <input type="text" th:field="*{plantType}" class="form-control"/>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Soil Type</label>
+                    <input type="text" th:field="*{soilType}" class="form-control"/>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Moisture Level (%)</label>
+                    <input type="number" step="0.1" th:field="*{moistureLevel}" class="form-control" th:errorclass="is-invalid"/>
+                    <div class="invalid-feedback" th:errors="*{moistureLevel}"></div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Moisture Threshold (%)</label>
+                    <input type="number" step="0.1" th:field="*{moistureThreshold}" class="form-control" th:errorclass="is-invalid"/>
+                    <div class="invalid-feedback" th:errors="*{moistureThreshold}"></div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Water Requirement (litres)</label>
+                    <input type="number" step="0.1" th:field="*{waterRequirement}" class="form-control" th:errorclass="is-invalid"/>
+                    <div class="invalid-feedback" th:errors="*{waterRequirement}"></div>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Notes</label>
+                    <textarea th:field="*{notes}" class="form-control" rows="2"></textarea>
+                </div>
+                <div class="col-12 small text-muted">
+                    <i class="bi bi-info-circle"></i> If moisture is below the threshold, the zone is flagged NEEDS WATER.
+                    Automated irrigation recommendation — field verification recommended.
+                </div>
+                <div class="col-12 d-flex gap-2">
+                    <button type="submit" class="btn btn-sp-primary"><i class="bi bi-save me-1"></i>Save</button>
+                    <a href="/zones" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments :: scripts}"></footer>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: headContent('Irrigation Form')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar('irrigation')}"></nav>
+<div th:replace="~{fragments :: alerts-banner}"></div>
+
+<div class="container py-4">
+    <div class="sp-page-header">
+        <h2><i class="bi bi-water me-2"></i><span th:text="${schedule.id == null} ? 'New Irrigation Schedule' : 'Edit Irrigation Schedule'">Schedule</span></h2>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <form th:action="${schedule.id == null} ? @{/irrigation/save} : @{/irrigation/{id}/update(id=${schedule.id})}"
+                  th:object="${schedule}" method="post" class="row g-3">
+
+                <div class="col-md-6">
+                    <label class="form-label">Zone *</label>
+                    <select th:field="*{zone.id}" class="form-select" required>
+                        <option value="">-- Select zone --</option>
+                        <option th:each="z : ${zones}" th:value="${z.id}" th:text="${z.zoneCode + ' - ' + z.zoneName}"></option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Scheduled Date *</label>
+                    <input type="date" th:field="*{scheduledDate}" class="form-control" th:errorclass="is-invalid"/>
+                    <div class="invalid-feedback" th:errors="*{scheduledDate}"></div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Start Time *</label>
+                    <input type="time" th:field="*{startTime}" class="form-control" th:errorclass="is-invalid"/>
+                    <div class="invalid-feedback" th:errors="*{startTime}"></div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Duration (minutes) *</label>
+                    <input type="number" th:field="*{durationMinutes}" class="form-control" th:errorclass="is-invalid"/>
+                    <div class="invalid-feedback" th:errors="*{durationMinutes}"></div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Water Quantity (litres) *</label>
+                    <input type="number" step="0.1" th:field="*{waterQuantity}" class="form-control" th:errorclass="is-invalid"/>
+                    <div class="invalid-feedback" th:errors="*{waterQuantity}"></div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Mode</label>
+                    <select th:field="*{automatic}" class="form-select">
+                        <option value="true">Automatic</option>
+                        <option value="false">Manual</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Status</label>
+                    <select th:field="*{status}" class="form-select">
+                        <option value="SCHEDULED">SCHEDULED</option>
+                        <option value="RUNNING">RUNNING</option>
+                        <option value="COMPLETED">COMPLETED</option>
+                        <option value="SKIPPED">SKIPPED</option>
+                        <option value="CANCELLED">CANCELLED</option>
+                    </select>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Notes</label>
+                    <textarea th:field="*{notes}" class="form-control" rows="2"></textarea>
+                </div>
+                <div class="col-12 d-flex gap-2">
+                    <button type="submit" class="btn btn-sp-primary"><i class="bi bi-save me-1"></i>Save</button>
+                    <a href="/irrigation" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments :: scripts}"></footer>
+</body>
+</html>

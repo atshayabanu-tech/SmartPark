@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: headContent('Maintenance')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar('maintenance')}"></nav>
+<div th:replace="~{fragments :: alerts-banner}"></div>
+
+<div class="container-fluid py-4">
+    <div class="sp-page-header d-flex flex-wrap justify-content-between align-items-center">
+        <div>
+            <h2><i class="bi bi-tools me-2"></i>Maintenance Tasks</h2>
+            <p class="mb-0">Track park upkeep. Tasks past their scheduled date and not completed show as OVERDUE.</p>
+        </div>
+        <a href="/maintenance/new" class="btn btn-light mt-2 mt-md-0"><i class="bi bi-plus-circle me-1"></i>New Task</a>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <form method="get" action="/maintenance" class="row g-2">
+                <div class="col-md-3">
+                    <input type="text" name="search" class="form-control" placeholder="Search title, category, staff, status" th:value="${search}"/>
+                </div>
+                <div class="col-md-2">
+                    <select name="status" class="form-select">
+                        <option value="">All Statuses</option>
+                        <option th:each="s : ${ {'PENDING','IN_PROGRESS','COMPLETED','OVERDUE'} }"
+                                th:value="${s}" th:text="${s}" th:selected="${status == s}"></option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select name="priority" class="form-select">
+                        <option value="">All Priorities</option>
+                        <option th:each="s : ${ {'LOW','MEDIUM','HIGH','CRITICAL'} }"
+                                th:value="${s}" th:text="${s}" th:selected="${priority == s}"></option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select name="category" class="form-select">
+                        <option value="">All Categories</option>
+                        <option th:each="s : ${ {'GRASS_CUTTING','TREE_TRIMMING','CLEANING','WASTE_COLLECTION','BENCH_REPAIR','LIGHT_REPAIR','PLAYGROUND_REPAIR','PLANTING','GENERAL'} }"
+                                th:value="${s}" th:text="${s}" th:selected="${category == s}"></option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <input type="text" name="assignedTo" class="form-control" placeholder="Assigned staff" th:value="${assignedTo}"/>
+                </div>
+                <div class="col-md-1 d-grid">
+                    <button class="btn btn-sp-primary" type="submit"><i class="bi bi-search"></i></button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                    <tr><th>Task</th><th>Park</th><th>Zone</th><th>Category</th><th>Priority</th><th>Assigned</th><th>Scheduled</th><th>Status</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="t : ${tasks}">
+                        <td class="fw-semibold" th:text="${t.taskTitle}"></td>
+                        <td th:text="${t.park != null ? t.park.parkName : '-'}"></td>
+                        <td th:text="${t.zone != null ? t.zone.zoneCode : '-'}"></td>
+                        <td th:text="${t.category}"></td>
+                        <td><span th:replace="~{fragments :: severityBadge(${t.priority})}"></span></td>
+                        <td th:text="${t.assignedTo}"></td>
+                        <td th:text="${t.scheduledDate}"></td>
+                        <td><span th:replace="~{fragments :: taskStatusBadge(${t})}"></span></td>
+                        <td class="text-nowrap">
+                            <form th:if="${t.status != 'COMPLETED'}" th:action="@{/maintenance/{id}/complete(id=${t.id})}" method="post" class="d-inline">
+                                <button class="btn btn-sm btn-success" type="submit"><i class="bi bi-check2"></i> Complete</button>
+                            </form>
+                            <a th:href="@{/maintenance/{id}/edit(id=${t.id})}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+                            <form th:action="@{/maintenance/{id}/delete(id=${t.id})}" method="post" class="d-inline" data-confirm="Delete this task?">
+                                <button class="btn btn-sm btn-outline-danger" type="submit"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(tasks)}"><td colspan="9" class="text-center text-muted">No tasks found.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments :: scripts}"></footer>
+</body>
+</html>

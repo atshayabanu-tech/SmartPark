@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: headContent('Irrigation Zones')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar('zones')}"></nav>
+<div th:replace="~{fragments :: alerts-banner}"></div>
+
+<div class="container-fluid py-4">
+    <div class="sp-page-header d-flex flex-wrap justify-content-between align-items-center">
+        <div>
+            <h2><i class="bi bi-droplet-half me-2"></i>Irrigation Zones</h2>
+            <p class="mb-0">Monitor soil moisture, valves and irrigation status per zone.</p>
+        </div>
+        <a href="/zones/new" class="btn btn-light mt-2 mt-md-0"><i class="bi bi-plus-circle me-1"></i>New Zone</a>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <form method="get" action="/zones" class="row g-2">
+                <div class="col-md-3">
+                    <input type="text" name="search" class="form-control" placeholder="Search code, name, plant, soil" th:value="${search}"/>
+                </div>
+                <div class="col-md-2">
+                    <select name="parkId" class="form-select">
+                        <option value="">All Parks</option>
+                        <option th:each="p : ${parks}" th:value="${p.id}" th:text="${p.parkName}" th:selected="${parkId != null and parkId == p.id}"></option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select name="irrigationStatus" class="form-select">
+                        <option value="">All Statuses</option>
+                        <option th:each="s : ${ {'NORMAL','NEEDS_WATER','RUNNING','SCHEDULED'} }"
+                                th:value="${s}" th:text="${s}" th:selected="${irrigationStatus == s}"></option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <input type="text" name="plantType" class="form-control" placeholder="Plant type" th:value="${plantType}"/>
+                </div>
+                <div class="col-md-1">
+                    <input type="text" name="soilType" class="form-control" placeholder="Soil" th:value="${soilType}"/>
+                </div>
+                <div class="col-md-2 d-grid d-md-flex gap-2">
+                    <button class="btn btn-sp-primary" type="submit"><i class="bi bi-search"></i></button>
+                    <a href="/zones" class="btn btn-outline-secondary">Reset</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                    <tr>
+                        <th>Code</th><th>Name</th><th>Park</th><th>Plant</th><th>Soil</th><th>Moisture</th>
+                        <th>Threshold</th><th>Valve</th><th>Status</th><th>Last Watered</th><th>Next Watering</th><th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="z : ${zones}">
+                        <td th:text="${z.zoneCode}"></td>
+                        <td class="fw-semibold" th:text="${z.zoneName}"></td>
+                        <td th:text="${z.park != null ? z.park.parkName : '-'}"></td>
+                        <td th:text="${z.plantType}"></td>
+                        <td th:text="${z.soilType}"></td>
+                        <td th:text="${z.moistureLevel} + '%'"></td>
+                        <td th:text="${z.moistureThreshold} + '%'"></td>
+                        <td><span class="badge" th:classappend="${z.valveStatus == 'OPEN'} ? 'bg-primary' : 'bg-secondary'" th:text="${z.valveStatus}"></span></td>
+                        <td><span th:replace="~{fragments :: irrStatusBadge(${z.irrigationStatus})}"></span></td>
+                        <td th:text="${z.lastWatered != null} ? ${#temporals.format(z.lastWatered, 'dd-MMM HH:mm')} : '-'"></td>
+                        <td th:text="${z.nextScheduledWatering != null} ? ${#temporals.format(z.nextScheduledWatering, 'dd-MMM HH:mm')} : '-'"></td>
+                        <td class="text-nowrap">
+                            <a th:href="@{/zones/{id}/edit(id=${z.id})}" class="btn btn-sm btn-outline-secondary" title="Edit"><i class="bi bi-pencil"></i></a>
+                            <a th:href="@{/irrigation/new(zoneId=${z.id})}" class="btn btn-sm btn-outline-primary" title="Schedule irrigation"><i class="bi bi-water"></i></a>
+                            <form th:action="@{/zones/{id}/delete(id=${z.id})}" method="post" class="d-inline" data-confirm="Delete this zone?">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(zones)}"><td colspan="12" class="text-center text-muted">No zones found.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="small text-muted mb-0"><i class="bi bi-info-circle"></i> Automated irrigation recommendation — field verification recommended.</p>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments :: scripts}"></footer>
+</body>
+</html>

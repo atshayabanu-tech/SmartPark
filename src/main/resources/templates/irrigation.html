@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: headContent('Irrigation')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar('irrigation')}"></nav>
+<div th:replace="~{fragments :: alerts-banner}"></div>
+
+<div class="container-fluid py-4">
+    <div class="sp-page-header d-flex flex-wrap justify-content-between align-items-center">
+        <div>
+            <h2><i class="bi bi-water me-2"></i>Irrigation Schedules</h2>
+            <p class="mb-0">Automated irrigation recommendation — field verification recommended.</p>
+        </div>
+        <a href="/irrigation/new" class="btn btn-light mt-2 mt-md-0"><i class="bi bi-plus-circle me-1"></i>New Schedule</a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                    <tr><th>Zone</th><th>Park</th><th>Date</th><th>Start</th><th>Duration</th><th>Water (L)</th><th>Mode</th><th>Status</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="s : ${schedules}">
+                        <td th:text="${s.zone.zoneCode + ' - ' + s.zone.zoneName}"></td>
+                        <td th:text="${s.zone.park != null ? s.zone.park.parkName : '-'}"></td>
+                        <td th:text="${s.scheduledDate}"></td>
+                        <td th:text="${s.startTime}"></td>
+                        <td th:text="${s.durationMinutes} + ' min'"></td>
+                        <td th:text="${s.waterQuantity}"></td>
+                        <td><span class="badge" th:classappend="${s.automatic} ? 'bg-success' : 'bg-secondary'" th:text="${s.automatic} ? 'AUTOMATIC' : 'MANUAL'"></span></td>
+                        <td><span th:replace="~{fragments :: irrStatusBadge(${s.status})}"></span></td>
+                        <td class="text-nowrap">
+                            <form th:if="${s.status == 'SCHEDULED'}" th:action="@{/irrigation/{id}/start(id=${s.id})}" method="post" class="d-inline">
+                                <button class="btn btn-sm btn-primary" type="submit"><i class="bi bi-play-fill"></i> Start</button>
+                            </form>
+                            <form th:if="${s.status == 'RUNNING'}" th:action="@{/irrigation/{id}/complete(id=${s.id})}" method="post" class="d-inline">
+                                <button class="btn btn-sm btn-success" type="submit"><i class="bi bi-check2"></i> Complete</button>
+                            </form>
+                            <form th:if="${s.status == 'SCHEDULED' or s.status == 'RUNNING'}" th:action="@{/irrigation/{id}/cancel(id=${s.id})}" method="post" class="d-inline">
+                                <button class="btn btn-sm btn-outline-warning" type="submit"><i class="bi bi-x-circle"></i> Cancel</button>
+                            </form>
+                            <a th:href="@{/irrigation/{id}/edit(id=${s.id})}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+                            <form th:action="@{/irrigation/{id}/delete(id=${s.id})}" method="post" class="d-inline" data-confirm="Delete this schedule?">
+                                <button class="btn btn-sm btn-outline-danger" type="submit"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(schedules)}"><td colspan="9" class="text-center text-muted">No schedules.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments :: scripts}"></footer>
+</body>
+</html>

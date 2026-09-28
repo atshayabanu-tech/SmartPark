@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: headContent('Alerts')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar('alerts')}"></nav>
+<div th:replace="~{fragments :: alerts-banner}"></div>
+
+<div class="container-fluid py-4">
+    <div class="sp-page-header">
+        <h2><i class="bi bi-exclamation-triangle me-2"></i>Alerts</h2>
+        <p class="mb-0">Active and resolved alerts across all parks.</p>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <form method="get" action="/alerts" class="row g-2">
+                <div class="col-md-3">
+                    <select name="severity" class="form-select">
+                        <option value="">All Severities</option>
+                        <option th:each="s : ${ {'CRITICAL','HIGH','MEDIUM','LOW'} }"
+                                th:value="${s}" th:text="${s}" th:selected="${severity == s}"></option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select name="type" class="form-select">
+                        <option value="">All Types</option>
+                        <option th:each="s : ${ {'LOW_SOIL_MOISTURE','HIGH_TEMPERATURE','HEAVY_RAINFALL','IRRIGATION_REQUIRED','IRRIGATION_FAILURE','MAINTENANCE_OVERDUE','SENSOR_WARNING'} }"
+                                th:value="${s}" th:text="${s}" th:selected="${type == s}"></option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select name="resolvedFilter" class="form-select">
+                        <option value="">Active + Resolved</option>
+                        <option value="active" th:selected="${resolvedFilter == 'active'}">Active only</option>
+                        <option value="resolved" th:selected="${resolvedFilter == 'resolved'}">Resolved only</option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex gap-2">
+                    <button class="btn btn-sp-primary" type="submit"><i class="bi bi-funnel"></i> Filter</button>
+                    <a href="/alerts" class="btn btn-outline-secondary">Reset</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                    <tr><th>Type</th><th>Park</th><th>Zone</th><th>Message</th><th>Severity</th><th>Date</th><th>Status</th><th>Action</th></tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="a : ${alerts}">
+                        <td th:text="${a.type}"></td>
+                        <td th:text="${a.park != null ? a.park.parkName : '-'}"></td>
+                        <td th:text="${a.zone != null ? a.zone.zoneCode : '-'}"></td>
+                        <td th:text="${a.message}"></td>
+                        <td><span th:replace="~{fragments :: severityBadge(${a.severity})}"></span></td>
+                        <td th:text="${#temporals.format(a.alertDate, 'dd-MMM HH:mm')}"></td>
+                        <td><span class="badge" th:classappend="${a.resolved} ? 'bg-success' : 'bg-danger'" th:text="${a.resolved} ? 'RESOLVED' : 'ACTIVE'"></span></td>
+                        <td>
+                            <form th:if="${!a.resolved}" th:action="@{/alerts/{id}/resolve(id=${a.id})}" method="post">
+                                <button class="btn btn-sm btn-success" type="submit"><i class="bi bi-check2-circle"></i> Resolve</button>
+                            </form>
+                            <span th:if="${a.resolved}" class="text-muted">—</span>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(alerts)}"><td colspan="8" class="text-center text-muted">No alerts found.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments :: scripts}"></footer>
+</body>
+</html>

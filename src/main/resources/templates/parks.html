@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: headContent('Parks')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar('parks')}"></nav>
+<div th:replace="~{fragments :: alerts-banner}"></div>
+
+<div class="container-fluid py-4">
+    <div class="sp-page-header d-flex flex-wrap justify-content-between align-items-center">
+        <div>
+            <h2><i class="bi bi-flower1 me-2"></i>Parks</h2>
+            <p class="mb-0">Manage municipal parks and their profiles.</p>
+        </div>
+        <a href="/parks/new" class="btn btn-light mt-2 mt-md-0"><i class="bi bi-plus-circle me-1"></i>New Park</a>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <form method="get" action="/parks" class="row g-2">
+                <div class="col-md-4">
+                    <input type="text" name="search" class="form-control" placeholder="Search code, name, location, manager" th:value="${search}"/>
+                </div>
+                <div class="col-md-3">
+                    <select name="status" class="form-select">
+                        <option value="">All Statuses</option>
+                        <option value="ACTIVE" th:selected="${status == 'ACTIVE'}">ACTIVE</option>
+                        <option value="MAINTENANCE" th:selected="${status == 'MAINTENANCE'}">MAINTENANCE</option>
+                        <option value="CLOSED" th:selected="${status == 'CLOSED'}">CLOSED</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <input type="text" name="location" class="form-control" placeholder="Filter by location" th:value="${location}"/>
+                </div>
+                <div class="col-md-2 d-grid d-md-flex gap-2">
+                    <button class="btn btn-sp-primary" type="submit"><i class="bi bi-search"></i> Apply</button>
+                    <a href="/parks" class="btn btn-outline-secondary">Reset</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                    <tr>
+                        <th>Code</th><th>Name</th><th>Location</th><th>Area</th><th>Manager</th>
+                        <th>Zones</th><th>Status</th><th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="p : ${parks}">
+                        <td th:text="${p.parkCode}">PK-001</td>
+                        <td class="fw-semibold" th:text="${p.parkName}">Name</td>
+                        <td th:text="${p.location}">Loc</td>
+                        <td th:text="${p.area} + ' acres'">1</td>
+                        <td th:text="${p.managerName}">Mgr</td>
+                        <td th:text="${p.totalZones}">0</td>
+                        <td>
+                            <span class="badge badge-status"
+                                  th:classappend="${p.status == 'ACTIVE'} ? 'bg-success' : (${p.status == 'MAINTENANCE'} ? 'bg-warning text-dark' : 'bg-secondary')"
+                                  th:text="${p.status}">ACTIVE</span>
+                        </td>
+                        <td class="text-nowrap">
+                            <a th:href="@{/parks/{id}(id=${p.id})}" class="btn btn-sm btn-outline-primary" title="View"><i class="bi bi-eye"></i></a>
+                            <a th:href="@{/parks/{id}/edit(id=${p.id})}" class="btn btn-sm btn-outline-secondary" title="Edit"><i class="bi bi-pencil"></i></a>
+                            <a th:href="@{/zones(parkId=${p.id})}" class="btn btn-sm btn-outline-success" title="View Zones"><i class="bi bi-droplet"></i></a>
+                            <a th:href="@{/maintenance/new(parkId=${p.id})}" class="btn btn-sm btn-outline-warning" title="Add Maintenance Task"><i class="bi bi-tools"></i></a>
+                            <form th:action="@{/parks/{id}/delete(id=${p.id})}" method="post" class="d-inline"
+                                  data-confirm="Delete this park and all its zones, tasks and alerts?">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(parks)}">
+                        <td colspan="8" class="text-center text-muted">No parks found.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments :: scripts}"></footer>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<head th:fragment="headContent(title)">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="${title} + ' | SmartPark'">SmartPark</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
+    <link href="/css/style.css" rel="stylesheet"/>
+</head>
+
+<nav th:fragment="navbar(activePage)" class="navbar navbar-expand-lg navbar-dark sp-navbar sticky-top">
+    <div class="container-fluid">
+        <a class="navbar-brand fw-bold" href="/">
+            <i class="bi bi-tree-fill me-1"></i> SmartPark
+            <div class="sp-subtitle">Public Park Maintenance &amp; Automated Irrigation Grid</div>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#spNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="spNav">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link" th:classappend="${activePage == 'dashboard'} ? 'active'" href="/"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" th:classappend="${activePage == 'parks'} ? 'active'" href="/parks"><i class="bi bi-flower1"></i> Parks</a></li>
+                <li class="nav-item"><a class="nav-link" th:classappend="${activePage == 'zones'} ? 'active'" href="/zones"><i class="bi bi-droplet-half"></i> Irrigation Zones</a></li>
+                <li class="nav-item"><a class="nav-link" th:classappend="${activePage == 'irrigation'} ? 'active'" href="/irrigation"><i class="bi bi-water"></i> Irrigation</a></li>
+                <li class="nav-item"><a class="nav-link" th:classappend="${activePage == 'maintenance'} ? 'active'" href="/maintenance"><i class="bi bi-tools"></i> Maintenance</a></li>
+                <li class="nav-item"><a class="nav-link" th:classappend="${activePage == 'sensors'} ? 'active'" href="/sensors"><i class="bi bi-broadcast"></i> Sensors</a></li>
+                <li class="nav-item"><a class="nav-link" th:classappend="${activePage == 'alerts'} ? 'active'" href="/alerts"><i class="bi bi-exclamation-triangle"></i> Alerts</a></li>
+                <li class="nav-item"><a class="nav-link" href="/h2-console" target="_blank"><i class="bi bi-database"></i> H2 Console</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div th:fragment="alerts-banner" class="container-fluid mt-3" th:if="${successMessage != null or errorMessage != null}">
+    <div th:if="${successMessage != null}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-1"></i> <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${errorMessage != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-x-circle-fill me-1"></i> <span th:text="${errorMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+</div>
+
+<th:block th:fragment="scripts">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/app.js"></script>
+</th:block>
+
+<span th:fragment="irrStatusBadge(status)" class="badge badge-status"
+      th:classappend="${status == 'NORMAL'} ? 'bg-success' : (${status == 'NEEDS_WATER'} ? 'bg-danger' : (${status == 'RUNNING'} ? 'bg-primary' : (${status == 'COMPLETED'} ? 'bg-info text-dark' : (${status == 'SCHEDULED'} ? 'bg-warning text-dark' : 'bg-secondary'))))"
+      th:text="${#strings.replace(status, '_', ' ')}">NORMAL</span>
+
+<span th:fragment="severityBadge(severity)" class="badge badge-status"
+      th:classappend="${severity == 'CRITICAL'} ? 'bg-danger' : (${severity == 'HIGH'} ? 'bg-warning text-dark' : (${severity == 'MEDIUM'} ? 'bg-info text-dark' : 'bg-secondary'))"
+      th:text="${severity}">LOW</span>
+
+<span th:fragment="taskStatusBadge(t)" class="badge badge-status"
+      th:with="eff=${t.overdue} ? 'OVERDUE' : ${t.status}"
+      th:classappend="${eff == 'COMPLETED'} ? 'bg-success' : (${eff == 'OVERDUE'} ? 'bg-danger' : (${eff == 'IN_PROGRESS'} ? 'bg-primary' : 'bg-secondary'))"
+      th:text="${#strings.replace(eff, '_', ' ')}">PENDING</span>
+
+</body>
+</html>

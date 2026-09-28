@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: headContent('Dashboard')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar('dashboard')}"></nav>
+<div th:replace="~{fragments :: alerts-banner}"></div>
+
+<div class="container-fluid py-4">
+
+    <div class="sp-page-header">
+        <h2><i class="bi bi-speedometer2 me-2"></i>Park Operations Dashboard</h2>
+        <p class="mb-0">Live overview of parks, irrigation zones, environmental conditions and maintenance activity.</p>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-6 col-md-3">
+            <div class="card stat-card bg-sp-1">
+                <div class="card-body">
+                    <div class="stat-value" th:text="${stats.totalParks}">0</div>
+                    <div class="stat-label">Total Parks</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card stat-card bg-sp-2">
+                <div class="card-body">
+                    <div class="stat-value" th:text="${stats.totalZones}">0</div>
+                    <div class="stat-label">Irrigation Zones</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card stat-card bg-sp-5">
+                <div class="card-body">
+                    <div class="stat-value" th:text="${stats.zonesRequiringWater}">0</div>
+                    <div class="stat-label">Water Required</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card stat-card bg-sp-3">
+                <div class="card-body">
+                    <div class="stat-value" th:text="${stats.activeIrrigationZones}">0</div>
+                    <div class="stat-label">Active Irrigation</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card stat-card bg-sp-8">
+                <div class="card-body">
+                    <div class="stat-value" th:text="${stats.pendingMaintenance}">0</div>
+                    <div class="stat-label">Pending Maintenance</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card stat-card bg-sp-6">
+                <div class="card-body">
+                    <div class="stat-value" th:text="${stats.overdueMaintenance}">0</div>
+                    <div class="stat-label">Overdue Tasks</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card stat-card bg-sp-7">
+                <div class="card-body">
+                    <div class="stat-value" th:text="${stats.todaysSchedules}">0</div>
+                    <div class="stat-label">Today's Irrigation</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card stat-card bg-sp-6">
+                <div class="card-body">
+                    <div class="stat-value" th:text="${stats.activeAlerts}">0</div>
+                    <div class="stat-label">Active Alerts</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mt-1">
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-moisture text-primary" style="font-size:2rem;"></i>
+                    <h3 class="mt-2" th:text="${stats.averageMoisture} + ' %'">0 %</h3>
+                    <div class="text-muted">Average Soil Moisture Across All Zones</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="section-title">Recent Sensor Readings</h5>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover align-middle">
+                            <thead class="table-light">
+                            <tr>
+                                <th>Zone</th>
+                                <th>Moisture</th>
+                                <th>Temp</th>
+                                <th>Humidity</th>
+                                <th>Rainfall</th>
+                                <th>Recorded</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="r : ${recentReadings}">
+                                <td th:text="${r.zone != null ? r.zone.zoneCode : '-'}">Z-001</td>
+                                <td th:text="${r.moistureLevel} + '%'">30%</td>
+                                <td th:text="${r.temperature} + 'C'">30C</td>
+                                <td th:text="${r.humidity} + '%'">50%</td>
+                                <td th:text="${r.rainfall} + 'mm'">0mm</td>
+                                <td th:text="${#temporals.format(r.recordedAt, 'dd-MMM HH:mm')}">-</td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(recentReadings)}">
+                                <td colspan="6" class="text-center text-muted">No sensor readings yet.</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mt-1">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body d-flex flex-wrap gap-2">
+                    <a href="/parks/new" class="btn btn-sp-primary"><i class="bi bi-plus-circle me-1"></i>Add Park</a>
+                    <a href="/zones/new" class="btn btn-outline-success"><i class="bi bi-plus-circle me-1"></i>Add Irrigation Zone</a>
+                    <a href="/irrigation/new" class="btn btn-outline-primary"><i class="bi bi-plus-circle me-1"></i>Schedule Irrigation</a>
+                    <a href="/maintenance/new" class="btn btn-outline-warning"><i class="bi bi-plus-circle me-1"></i>Add Maintenance Task</a>
+                    <a href="/sensors" class="btn btn-outline-info"><i class="bi bi-broadcast me-1"></i>Record Sensor Reading</a>
+                    <a href="/alerts" class="btn btn-outline-danger"><i class="bi bi-exclamation-triangle me-1"></i>View Alerts</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<footer th:replace="~{fragments :: scripts}"></footer>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: headContent('Park Form')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar('parks')}"></nav>
+<div th:replace="~{fragments :: alerts-banner}"></div>
+
+<div class="container py-4">
+    <div class="sp-page-header">
+        <h2><i class="bi bi-flower1 me-2"></i><span th:text="${park.id == null} ? 'New Park' : 'Edit Park'">Park</span></h2>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <form th:action="${park.id == null} ? @{/parks/save} : @{/parks/{id}/update(id=${park.id})}"
+                  th:object="${park}" method="post" class="row g-3">
+
+                <div class="col-md-4">
+                    <label class="form-label">Park Code *</label>
+                    <input type="text" th:field="*{parkCode}" class="form-control" th:errorclass="is-invalid"/>
+                    <div class="invalid-feedback" th:errors="*{parkCode}"></div>
+                </div>
+                <div class="col-md-8">
+                    <label class="form-label">Park Name *</label>
+                    <input type="text" th:field="*{parkName}" class="form-control" th:errorclass="is-invalid"/>
+                    <div class="invalid-feedback" th:errors="*{parkName}"></div>
+                </div>
+                <div class="col-md-8">
+                    <label class="form-label">Location *</label>
+                    <input type="text" th:field="*{location}" class="form-control" th:errorclass="is-invalid"/>
+                    <div class="invalid-feedback" th:errors="*{location}"></div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Area (acres)</label>
+                    <input type="number" step="0.01" th:field="*{area}" class="form-control" th:errorclass="is-invalid"/>
+                    <div class="invalid-feedback" th:errors="*{area}"></div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Manager Name</label>
+                    <input type="text" th:field="*{managerName}" class="form-control"/>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Contact Number</label>
+                    <input type="text" th:field="*{contactNumber}" class="form-control" th:errorclass="is-invalid"/>
+                    <div class="invalid-feedback" th:errors="*{contactNumber}"></div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Opening Time</label>
+                    <input type="time" th:field="*{openingTime}" class="form-control" th:errorclass="is-invalid"/>
+                    <div class="invalid-feedback" th:errors="*{openingTime}"></div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Closing Time</label>
+                    <input type="time" th:field="*{closingTime}" class="form-control" th:errorclass="is-invalid"/>
+                    <div class="invalid-feedback" th:errors="*{closingTime}"></div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Total Zones</label>
+                    <input type="number" th:field="*{totalZones}" class="form-control" th:errorclass="is-invalid"/>
+                    <div class="invalid-feedback" th:errors="*{totalZones}"></div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Status</label>
+                    <select th:field="*{status}" class="form-select">
+                        <option value="ACTIVE">ACTIVE</option>
+                        <option value="MAINTENANCE">MAINTENANCE</option>
+                        <option value="CLOSED">CLOSED</option>
+                    </select>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Notes</label>
+                    <textarea th:field="*{notes}" class="form-control" rows="3"></textarea>
+                </div>
+                <div class="col-12 d-flex gap-2">
+                    <button type="submit" class="btn btn-sp-primary"><i class="bi bi-save me-1"></i>Save</button>
+                    <a href="/parks" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments :: scripts}"></footer>
+</body>
+</html>
